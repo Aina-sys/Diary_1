@@ -54,8 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
         // This bypasses the onAuthStateChange listener in main.dart for this specific login.
         // We're doing this to diagnose if the issue is with the listener or the homepage itself.
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const MyHomePage()),
-          (route) => false, // Remove all previous routes
+          MaterialPageRoute(
+            builder: (context) => MyHomePage(
+              currentThemeMode: ThemeMode.system, // Replace with your desired ThemeMode or pass from parent
+              onToggleTheme: (bool value) {}, // Replace with your actual toggle function
+            ),
+          ),
+            (route) => false, // Remove all previous routes
         );
       } else {
         if (!mounted) return;

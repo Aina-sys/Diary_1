@@ -2,9 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart'; // Used for mood selection in form
 import 'package:intl/intl.dart'; // For date formatting
-// Removed shared_preferences and dart:convert as we're now using Supabase for data persistence
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart'; // Supabase import
 import '../screens/mood_tracker_screen.dart'; // Import MoodTrackerScreen
 import 'calendar_page.dart'; // Import CalendarPage
@@ -12,7 +9,15 @@ import '../services/notification_service.dart'; // Import NotificationService
 import 'login_screen.dart'; // Import LoginScreen for logout navigation
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  // Tambahkan parameter untuk mode tema saat ini dan fungsi toggle
+  final ThemeMode currentThemeMode;
+  final Function(bool isDark) onToggleTheme;
+
+  const MyHomePage({
+    Key? key,
+    required this.currentThemeMode,
+    required this.onToggleTheme,
+  }) : super(key: key);
 
   @override
   State<MyHomePage> createState() => MyHomePageState();
@@ -467,6 +472,19 @@ class MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
+              // Tombol untuk Dark Mode
+              ListTile(
+                leading: Icon(Icons.brightness_6), // Icon untuk tema (light/dark)
+                title: const Text('Dark Mode'),
+                trailing: Switch(
+                  // Periksa apakah tema saat ini adalah dark mode
+                  value: widget.currentThemeMode == ThemeMode.dark,
+                  onChanged: (bool isDark) {
+                    // Panggil fungsi onToggleTheme yang diteruskan dari main.dart
+                    widget.onToggleTheme(isDark);
+                  },
+                ),
+              ),
               ListTile(
                 leading: const Icon(Icons.calendar_month),
                 title: const Text('Calendar'),
@@ -511,7 +529,14 @@ class MyHomePageState extends State<MyHomePage> {
                 title: const Text('Logout'),
                 onTap: () async {
                   await Supabase.instance.client.auth.signOut();
-                  // Navigation will be handled by the onAuthStateChange listener in main.dart
+                  // Navigasi akan ditangani oleh onAuthStateChange listener di main.dart
+                  // Atau, jika menggunakan navigasi langsung dari login_screen,
+                  // pastikan untuk kembali ke LoginScreen secara manual di sini jika diperlukan
+                  if (!mounted) return;
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    (route) => false,
+                  );
                 },
               ),
             ],
