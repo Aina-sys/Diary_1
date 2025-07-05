@@ -1,5 +1,6 @@
 // 📁 lib/screens/home_page.dart
 import 'package:flutter/material.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart'; // Used for mood selection in form
 import 'package:intl/intl.dart'; // For date formatting
 import 'package:supabase_flutter/supabase_flutter.dart'; // Supabase import
 import '../screens/mood_tracker_screen.dart'; // Import MoodTrackerScreen
